@@ -2,21 +2,181 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.example.mapper.InfoMapper">
 
-    <insert id="addInfo" useGeneratedKeys="true" keyProperty="id">
-        insert into infos(game_name,
-                          equipment_number,
-                          location_of_equipment
-                         )
-                    VALUES(#{game_name},
-                           #{equipment_number},
-                           #{location_of_equipment}
-                          )
+    <insert id="insert_Basic_Information_Of_Equipment_Infos" useGeneratedKeys="true" keyProperty="id">
+        insert into basic_information_of_equipment(
+            serial_number,
+            device_id,
+            location_of_the_device,
+            device_start_date,
+            device_shutdown_date,
+            device_activation_time,
+            create_time
+        )
+    VALUES(#{serial_number},
+           #{device_id},
+           #{location_of_the_device},
+           #{device_start_date},
+           #{device_shutdown_date},
+           #{device_activation_time},
+           #{create_time}
+        )
     </insert>
-    <select id="getInfo" parameterType="java.util.Map" resultType="com.example.entity.info.InfoBean">
-        select * from infos
+
+    <insert id="insert_Abnormal_Information_Statistics_Infos" useGeneratedKeys="true">
+        insert into abnormal_information_statistics(
+            device_id,
+            location_of_the_device,
+            number_of_abnormal_interruptions_day,
+            number_of_abnormal_interruptions_week,
+            number_of_abnormal_interruptions_month,
+            number_of_abnormal_interruptions_year,
+            abnormal_exit_times_day,
+            abnormal_exit_times_week,
+            abnormal_exit_times_month,
+            abnormal_exit_times_year
+        )
+        VALUES(#{device_id},
+               #{location_of_the_device},
+               #{number_of_abnormal_interruptions_day},
+               #{number_of_abnormal_interruptions_week},
+               #{number_of_abnormal_interruptions_month},
+               #{number_of_abnormal_interruptions_year},
+               #{abnormal_exit_times_day},
+               #{abnormal_exit_times_week},
+               #{abnormal_exit_times_month},
+               #{abnormal_exit_times_year}
+              )
+    </insert>
+
+    <insert id="insert_Game_Information_Statistics_Infos" useGeneratedKeys="true">
+        insert into game_information_statistics(
+            game_name,
+            device_id,
+            location_of_the_device,
+            game_runs_day,
+            game_runs_week,
+            game_runs_month,
+            game_runs_year,
+            game_run_time_day,
+            game_run_time_week,
+            game_run_time_month,
+            game_run_time_year,
+            total_operation_time_of_equipment
+        )
+        VALUES(#{game_name},
+               #{device_id},
+               #{location_of_the_device},
+               #{game_runs_day},
+               #{game_runs_week},
+               #{game_runs_month},
+               #{game_runs_year},
+               #{game_run_time_day},
+               #{game_run_time_week},
+               #{game_run_time_month},
+               #{game_run_time_year},
+               #{total_operation_time_of_equipment}
+              )
+    </insert>
+
+    <insert id="insert_Exception_Information_List_Infos" useGeneratedKeys="true">
+        insert into exception_information_list(
+            device_id,
+            location_of_the_device,
+            information_feedback_after_pad_device_failure,
+            feedback_of_information_after_the_failure_of_smp,
+            device_shutdown_information_feedback_after_failure_window,
+            create_time
+        )
+        VALUES(#{device_id},
+               #{location_of_the_device},
+               #{information_feedback_after_pad_device_failure},
+               #{feedback_of_information_after_the_failure_of_smp},
+               #{device_shutdown_information_feedback_after_failure_window},
+               #{create_time}
+              )
+    </insert>
+
+    <delete id="delete_basic_information_of_Equipment_infos" parameterType="int">
+        delete from basic_information_of_equipment where id=#{id}
+    </delete>
+
+
+
+    <select id="get_Basic_Information_Of_Equipment_Infos" parameterType="java.util.Map" resultType="com.example.entity.info.Basic_Information_Of_Equipment">
+        select * from basic_information_of_equipment
     </select>
 
-    <delete id="deleteInfo" parameterType="int">
-        delete from infos where id=#{id}
-    </delete>
+
+    <select id="get_Game_Information_Statistics_Infos" parameterType="java.util.Map" resultType="com.example.entity.info.Game_Information_Statistics">
+        select * from game_information_statistics
+    </select>
+
+    <select id="get_Abnormal_Information_Statistics_Infos" parameterType="java.util.Map" resultType="com.example.entity.info.Abnormal_Information_Statistics">
+        select * from abnormal_information_statistics
+    </select>
+
+    <select id="get_Exception_Information_List_Infos" parameterType="java.util.Map" resultType="com.example.entity.info.Exception_Information_List">
+        select * from exception_information_list
+    </select>
+
+    <select id="get_Exception_Information_List_Infos_day" parameterType="java.util.Map" resultType="com.example.entity.info.Exception_Information_List">
+        select * from exception_information_list where create_time >= current_timestamp - interval 1 day
+    </select>
+
+    <select id="get_Exception_Information_List_Infos_week" parameterType="java.util.Map" resultType="com.example.entity.info.Exception_Information_List">
+        select * from  exception_information_list where yearweek(date_format(create_time,'%y-%m-%d')) = yearweek(now())
+    </select>
+
+    <select id="get_Exception_Information_List_Infos_month" parameterType="java.util.Map" resultType="com.example.entity.info.Exception_Information_List">
+        select * from  exception_information_list where date_format(create_time, '%y%m') = date_format(curdate() , '%y%m')
+    </select>
+
+    <select id="get_Exception_Information_List_Infos_year" parameterType="java.util.Map" resultType="com.example.entity.info.Exception_Information_List">
+        SELECT * FROM  exception_information_list WHERE YEAR(create_time)=YEAR(NOW())
+    </select>
+
+
+
+    <select id="get_Basic_Information_Of_Equipment_Infos_day" parameterType="java.util.Map" resultType="com.example.entity.info.Basic_Information_Of_Equipment">
+        select * from basic_information_of_equipment where create_time >= current_timestamp - interval 1 day
+    </select>
+
+    <select id="get_Basic_Information_Of_Equipment_Infos_week" parameterType="java.util.Map" resultType="com.example.entity.info.Basic_Information_Of_Equipment">
+        select * from  basic_information_of_equipment where yearweek(date_format(create_time,'%y-%m-%d')) = yearweek(now());
+    </select>
+
+    <select id="get_Basic_Information_Of_Equipment_Infos_month" parameterType="java.util.Map" resultType="com.example.entity.info.Basic_Information_Of_Equipment">
+        select * from  basic_information_of_equipment where date_format(create_time, '%y%m') = date_format(curdate() , '%y%m')
+    </select>
+
+    <select id="get_Basic_Information_Of_Equipment_Infos_year" parameterType="java.util.Map" resultType="com.example.entity.info.Basic_Information_Of_Equipment">
+        SELECT * FROM  basic_information_of_equipment WHERE YEAR(create_time)=YEAR(NOW())
+    </select>
+
+    <select id="search_get_Basic_Information_Of_Equipment_Infos" parameterType="java.util.Map" resultType="com.example.entity.info.Basic_Information_Of_Equipment">
+        <bind name="pattern" value="'%' + mydevice_id + '%'" />
+        select * from basic_information_of_equipment where device_id like #{pattern}
+    </select>
+
+    <select id="search_get_Game_Information_Statistics_Infos" parameterType="java.util.Map" resultType="com.example.entity.info.Game_Information_Statistics">
+        <bind name="pattern" value="'%' + mydevice_id + '%'" />
+        select * from game_information_statistics where device_id like #{pattern}
+    </select>
+
+    <select id="search_get_Abnormal_Information_Statistics_Infos" parameterType="java.util.Map" resultType="com.example.entity.info.Abnormal_Information_Statistics">
+        <bind name="pattern" value="'%' + mydevice_id + '%'" />
+        select * from abnormal_information_statistics where device_id like #{pattern}
+    </select>
+
+    <select id="search_get_Exception_Information_List_Infos" parameterType="java.util.Map" resultType="com.example.entity.info.Exception_Information_List">
+        <bind name="pattern" value="'%' + mydevice_id + '%'" />
+        select * from exception_information_list where device_id like #{pattern}
+    </select>
+
+    <select id="get_Basic_Information_Of_Equipment_Infos_fromData" parameterType="java.util.Map" resultType="com.example.entity.info.Basic_Information_Of_Equipment">
+        select * from basic_information_of_equipment where create_time between #{startTime} and #{endTime}
+    </select>
+    <select id="get_Exception_Information_List_Infos_fromData" parameterType="java.util.Map" resultType="com.example.entity.info.Exception_Information_List">
+        select * from exception_information_list where create_time between #{startTime} and #{endTime}
+    </select>
 </mapper>
